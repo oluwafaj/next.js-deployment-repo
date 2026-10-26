@@ -22,4 +22,3 @@ jobs:
 
       - name: Verify Running Containers
         run: docker ps
-EOF
