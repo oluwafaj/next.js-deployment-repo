@@ -1,30 +1,33 @@
-# Base image
+# Use Node.js base image
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependencies manifest
-COPY package*.json ./
-RUN npm install
+# 1. Declare the build argument
+ARG NEXT_PUBLIC_API_URL
+# 2. Expose it as an environment variable so Next.js can see it during build
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Copy application source files
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy the rest of the app code
 COPY . .
 
-# Build Next.js app for production
+# Build the Next.js app (it will now correctly bake in your live Azure URL)
 RUN npm run build
 
-# Production runner image
+# Production image runtime stage...
 FROM node:20-alpine AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
 
-# Copy necessary files from builder stage
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
+ENV PORT=3000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]
