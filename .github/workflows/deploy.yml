@@ -46,8 +46,10 @@ jobs:
           docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest ./my-backend
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest
 
-          # Build and push Frontend image to ACR
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest .
+          # Build and push Frontend image to ACR with the live backend URL
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL="https://backendnextjs-webapp-gtgsc2dbduhmh9e0.westus3-01.azurewebsites.net" \
+            -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest
 
   deploy-to-app-service:
