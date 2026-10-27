@@ -53,10 +53,20 @@ jobs:
             -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest
 
+  deploy-backend:
+    needs: build-test-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Backend to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'backendnextjs-webapp' # Replace with your exact backend App Service name if different
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND }}
+          images: '${{ secrets.ACR_LOGIN_SERVER }}/backend:latest'
+
   deploy-frontend:
     needs: build-test-and-push
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy Frontend to Azure App Service
         uses: azure/webapps-deploy@v3
