@@ -2,12 +2,12 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
-// Enable CORS so http://localhost:3000 can talk to this server
+// Enable CORS for all origins in production (or specify your frontend URL)
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*", // Or specify: ["http://localhost:3000", "https://frontendnextjs-webapp-c2bgf9dgg8f6f7ft.westus3-01.azurewebsites.net"]
     credentials: true,
   })
 );
@@ -18,7 +18,7 @@ app.use(express.json());
 app.get("/api/v1/users", (req, res) => {
   res.json({
     success: true,
-    message: "Data fetched successfully from backend on port 3002!",
+    message: "Data fetched successfully from backend!",
     data: [
       { id: "1", name: "Oluwafemi", email: "femi@example.com" },
       { id: "2", name: "Alex Johnson", email: "alex@example.com" },
@@ -27,29 +27,6 @@ app.get("/api/v1/users", (req, res) => {
   });
 });
 
-// 2. Auth Login Endpoint
-app.post("/api/v1/auth/login", (req, res) => {
-  const { email, password } = req.body;
-
-  // Simple demo credentials check
-  if (email === "user@example.com" && password === "password123") {
-    return res.json({
-      success: true,
-      token: "mock-jwt-token-xyz-123",
-      user: {
-        id: "1",
-        email: "user@example.com",
-        name: "Oluwafemi",
-      },
-    });
-  }
-
-  return res.status(401).json({
-    success: false,
-    message: "Invalid email or password",
-  });
-});
-
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server is running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
