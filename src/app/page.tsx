@@ -1,56 +1,60 @@
-"use client";
+'use client';
 
-import { useUsers } from "@/hooks/use-users";
-import Link from "next/link";
+import React from 'react';
+import { useUsers } from '@/hooks/use-users';
 
-export default function HomePage() {
-  const { data, isLoading, isError, error, refetch } = useUsers();
+export default function DashboardPage() {
+  const { data, error, isLoading, refetch } = useUsers();
+  
+  // Dynamically resolve the API URL for production vs local development
+  const apiUrl = 
+    process.env.NEXT_PUBLIC_API_URL || 
+    "https://backendnextjs-webapp-gtgsc2dbduhmh9e0.westus3-01.azurewebsites.net/api/v1";
 
   return (
-    <main className="p-8 max-w-4xl mx-auto font-sans">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Backend Integration Dashboard</h1>
-          <p className="text-gray-600">Connected to http://localhost:3002/api/v1</p>
-        </div>
-        <Link
-          href="/login"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          Go to Login
-        </Link>
-      </div>
-
-      {/* Loading State */}
-      {isLoading && (
-        <div className="p-4 bg-blue-50 text-blue-700 rounded-md">
-          Fetching data from backend...
-        </div>
-      )}
-
-      {/* Error State */}
-      {isError && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-md">
-          <p className="font-semibold">Error connecting to backend:</p>
-          <p className="text-sm">{(error as Error)?.message}</p>
-          <button
-            onClick={() => refetch()}
-            className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+    <main className="min-h-screen p-8 bg-white text-black">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Backend Integration Dashboard</h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Connected to {apiUrl}
+            </p>
+          </div>
+          <a
+            href="/login"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
           >
-            Retry Request
-          </button>
+            Go to Login
+          </a>
         </div>
-      )}
 
-      {/* Success State */}
-      {data && (
-        <div className="p-4 bg-green-50 text-green-800 rounded-md">
-          <h2 className="text-xl font-semibold mb-2">Data Received:</h2>
-          <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm">
-            {JSON.stringify(data, null, 2)}
-          </pre>
-        </div>
-      )}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-lg mb-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-1">Error connecting to backend:</h2>
+            <p className="text-sm">{error.message || "Network Error"}</p>
+            <button
+              onClick={() => refetch()}
+              className="mt-4 bg-red-600 text-white px-4 py-2 rounded font-medium hover:bg-red-700 transition cursor-pointer"
+            >
+              Retry Request
+            </button>
+          </div>
+        )}
+
+        {isLoading && (
+          <p className="text-gray-500 py-4">Loading data from backend...</p>
+        )}
+
+        {data && (
+          <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg shadow-sm">
+            <h2 className="font-semibold text-lg mb-2">Successfully Connected!</h2>
+            <pre className="bg-white p-4 rounded border border-green-100 text-xs overflow-auto">
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
