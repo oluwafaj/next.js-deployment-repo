@@ -2,19 +2,17 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 8080;
 
-// Enable CORS for all origins in production (or specify your frontend URL)
 app.use(
   cors({
-    origin: "*", // Or specify: ["http://localhost:3000", "https://frontendnextjs-webapp-c2bgf9dgg8f6f7ft.westus3-01.azurewebsites.net"]
+    origin: "*",
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-// 1. Users Endpoint (for fetching dashboard data)
 app.get("/api/v1/users", (req, res) => {
   res.json({
     success: true,
