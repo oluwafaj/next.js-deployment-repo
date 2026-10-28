@@ -13,6 +13,12 @@ app.use(
 
 app.use(express.json());
 
+// Root health check route for Azure warm-up probes
+app.get("/", (req, res) => {
+  res.status(200).send("Backend API is running successfully!");
+});
+
+// Users Endpoint (for fetching dashboard data)
 app.get("/api/v1/users", (req, res) => {
   res.json({
     success: true,
