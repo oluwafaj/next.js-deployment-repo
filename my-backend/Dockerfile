@@ -4,9 +4,9 @@ FROM node:20-alpine
 # Set working directory inside container
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files and install dependencies (including any required modules)
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
 # Copy server code
 COPY server.js .
