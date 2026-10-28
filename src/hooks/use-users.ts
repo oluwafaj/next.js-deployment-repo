@@ -6,9 +6,9 @@ export function useUsers() {
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      // Sends GET request to http://localhost:3002/api/v1/users
-      const response = await apiClient.get<ApiResponse<User[]>>("/users");
+      // Sends GET request to the correct backend endpoint
+      const response = await apiClient.get<ApiResponse<User[]>>("/api/v1/users");
       return response.data;
-    },
+    }
   });
 }
